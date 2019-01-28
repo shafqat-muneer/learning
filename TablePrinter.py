@@ -8,40 +8,43 @@
 For practice, write a program that does the following.
 
 Table Printer
-Write a function named printTable() that takes a list of lists of strings and displays it in a well-organized table with each column right-justified. Assume that all the inner lists will contain the same number of strings.For example, the value could look like this:
+Write a function named print_table() that takes a list of lists of strings and
+displays it in a well-organized table with each column right-justified. Assume
+that all the inner lists will contain the same number of strings.For example,
+the value could look like this:
              tableData =    [['apples', 'oranges', 'cherries', 'banana'],
                             ['Alice', 'Bob', 'Carol', 'David'],
                             ['dogs', 'cats', 'moose', 'goose']]
-Your printTable() function would print the following:
+Your print_table() function would print the following:
                 apples Alice  dogs
                oranges   Bob  cats
               cherries Carol moose
                 banana David goose
 '''
 
-tableData = [['apples', 'oranges', 'cherries', 'banana'],
+table_data = [['apples', 'oranges', 'cherries', 'banana'],
             ['Alice', 'Bob', 'Carol', 'David'],
             ['dogs', 'cats', 'moose', 'goose']]
 
 
-def printTable():
-    colWidth = [0] * len(tableData)
-    for index in range(len(tableData)):
-        colWidth[index] = findMaxLength(tableData[index])
-    rightJustifiedTable(max(colWidth))
+def print_table():
+    col_width = [0] * len(table_data)
+    for index in range(len(table_data)):
+        col_width[index] = find_max_length(table_data[index])
+    right_justified_table(max(col_width))
     
     
-def rightJustifiedTable(colWidth):
-    for innerList in tableData:
-        for strItem in innerList:
-            print(strItem.rjust(colWidth)+' ', end='')
+def right_justified_table(col_width):
+    for inner_list in table_data:
+        for str_item in inner_list:
+            print(str_item.rjust(col_width)+' ', end='')
         print()
     
 
-def findMaxLength(listItems):
+def find_max_length(listItems):
     # It will first find maximum size string
     # After taking that maximum size string, we are taking lenght of that string
     return len(max(listItems, key=len))
         
 
-printTable()
+print_table()
