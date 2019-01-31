@@ -2,7 +2,7 @@
 
 # TODO: Review code with PEP 8 convention.
 
-import sys, os, re
+import sys, os, re, pprint
 
 
 # ---- Start Functions ----#
@@ -13,6 +13,99 @@ def is_report_number_valid(report_number):
 def is_data_dir_path_valid(data_dir):
     return os.path.exists(data_dir) and os.path.isdir(data_dir)
 
+def get_formatted_file_names(data_dir):
+    '''
+    Sample Data:
+    {
+	"1997": [
+		"lahore_weather_1997_Apr.txt",
+		"lahore_weather_1997_Aug.txt",
+		"lahore_weather_1997_Dec.txt"
+	],
+	"2001": [
+		"lahore_weather_2001_Apr.txt",
+		"lahore_weather_2001_Aug.txt",
+		"lahore_weather_2001_Dec.txt"
+	],
+	"2002": [
+		"lahore_weather_2002_Jan.txt",
+		"lahore_weather_2002_Jul.txt",
+		"lahore_weather_2002_Jun.txt"
+	]
+    }
+    '''
+    formatted_file_names = {}
+    file_names = os.listdir(data_dir)
+    for file_name in file_names:
+        if file_name.split("_")[2] not in formatted_file_names:
+            formatted_file_names[file_name.split("_")[2]] = [file_name]
+        else:
+            formatted_file_names[file_name.split("_")[2]].append(file_name)
+    return formatted_file_names
+
+def combine_weather_data_for_a_year(data_dir, single_year_file_names):
+    formatted_weather_data_of_single_year = []
+    find_comment_block_regex = re.compile(r'<!--.*-->')
+    for file_name in single_year_file_names:
+        file = open(data_dir + os.path.sep + file_name, 'r')
+        single_file_content = file.read()
+        file.close()
+
+
+
+        
+        weather_data = single_file_content.split('\n')
+        weather_data = list(filter(('').__ne__, weather_data))
+        weather_data = list(filter(lambda i: not find_comment_block_regex.search(i), weather_data))
+        
+
+        nested_list_of_file_content = []
+        for list_item_from_file in weather_data:
+            nested_list_of_file_content.append(list_item_from_file.split(','))
+        #print(nested_list_of_file_content)
+
+        #print('\n\n\n#########')
+
+
+        nested_list_of_file_content = nested_list_of_file_content[1:]#no need of titles for the time.
+        #0, 1, 3, 7, 9
+
+        formatted_weather_data_of_single_year.extend(nested_list_of_file_content)
+    return formatted_weather_data_of_single_year
+
+def generate_report_for_single_year(report_number):
+    year = []# Need to revisit it; It will always contain same value; So, why we need to create list and find max value in it?
+    max_temperature_each_day = []
+    min_temperature_each_day = []
+    max_humidity_each_day = []
+    min_humidity_each_day = []
+    print('Year[0]   MAX Temp[1]   MIN Temp[3]   MAX Humidity[7]   MIN Humidity[9]')
+    for list_item in nested_list_of_file_content:
+        year.append(list_item[0].split('-')[0])#Need to revise it.
+        max_temperature_each_day.append(int(list_item[1]))
+        min_temperature_each_day.append(int(list_item[3]))
+        max_humidity_each_day.append(int(list_item[7]))
+        min_humidity_each_day.append(int(list_item[9]))
+        #print(list_item[9])
+        #print(list_item[0].split('-')[0], list_item[1], list_item[3], list_item[7], list_item[9], sep='   ')
+
+    #print(min_humidity_each_day)
+    
+    print(max(year), max(max_temperature_each_day), min(min_temperature_each_day), max(max_humidity_each_day), min(min_humidity_each_day), sep='   ')
+
+
+
+'''
+def get_list_of_file_content(data_dir):
+    files_content = []
+    file_names = os.listdir(data_dir)
+    for file_name in file_names:
+        #print(file_name)
+        file = open(data_dir + os.path.sep + file_name, 'r')
+        files_content.append(file.read())
+        file.close()
+    return files_content
+'''
 # ---- End Functions ---- #
 
 
@@ -45,55 +138,16 @@ def main():
     # It means, all required arguments are valid.
     print('Congratulations! Valid Arguments.')
 
-    # file_names = os.listdir(data_dir)
-    # for file_name in file_names:
-        # print(file_name)
+    formatted_file_names_dictionary = get_formatted_file_names(data_dir)
+    #pprint.pprint(formatted_file_names_dictionary)
 
-    file = open(data_dir + os.path.sep + 'lahore_weather_2005_May.txt', 'r')
-    file_content = file.read()
+    for year_as_dic_key in formatted_file_names_dictionary.keys():
+        #print(year_as_dic_key)
+        single_year_weather_data = combine_weather_data_for_a_year(data_dir, formatted_file_names_dictionary[year_as_dic_key])
+    #print(all_years_weather_data)
+    #################################################################################
 
-    
-
-    find_comment_block_regex = re.compile(r'<!--.*-->')
-    weather_data = file_content.split('\n')
-    weather_data = list(filter(('').__ne__, weather_data))
-    weather_data = list(filter(lambda i: not find_comment_block_regex.search(i), weather_data))
-    #print(weather_data)
-
-    nested_list_of_file_content = []
-    for list_item_from_file in weather_data:
-        nested_list_of_file_content.append(list_item_from_file.split(','))
-    print(nested_list_of_file_content)
-
-    print('\n\n\n#########')
-
-
-    nested_list_of_file_content = nested_list_of_file_content[1:]#no need of titles for the time.
-    #0, 1, 3, 7, 9
-
-    year = []# Need to revisit it; It will always contain same value; So, why we need to create list and find max value in it?
-    max_temperature_each_day = []
-    min_temperature_each_day = []
-    max_humidity_each_day = []
-    min_humidity_each_day = []
-    print('Year[0]   MAX Temp[1]   MIN Temp[3]   MAX Humidity[7]   MIN Humidity[9]')
-    for list_item in nested_list_of_file_content:
-        year.append(list_item[0].split('-')[0])#Need to revise it.
-        max_temperature_each_day.append(int(list_item[1]))
-        min_temperature_each_day.append(int(list_item[3]))
-        max_humidity_each_day.append(int(list_item[7]))
-        min_humidity_each_day.append(int(list_item[9]))
-        #print(list_item[9])
-        #print(list_item[0].split('-')[0], list_item[1], list_item[3], list_item[7], list_item[9], sep='   ')
-
-    #print(min_humidity_each_day)
-    
-    print(max(year), max(max_temperature_each_day), min(min_temperature_each_day), max(max_humidity_each_day), min(min_humidity_each_day), sep='   ')
-
-
-
-
-    
+    #How to convert emtpy string to int 0???
 
 if __name__ == "__main__":
     main()
