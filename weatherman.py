@@ -2,7 +2,7 @@
 
 # TODO: Review code with PEP 8 convention.
 
-import sys, os, re, pprint
+import sys, os, re, pprint, operator
 
 
 # ---- Start Functions ----#
@@ -73,6 +73,38 @@ def combine_weather_data_for_a_year(data_dir, single_year_file_names):
         formatted_weather_data_of_single_year.extend(nested_list_of_file_content)
     return formatted_weather_data_of_single_year
 
+def single_year_temprature_result(single_year_weather_data):
+    year = []# Need to revisit it; It will always contain same value; So, why we need to create list and find max value in it?
+    max_temperature_each_day = []
+    min_temperature_each_day = []
+    max_humidity_each_day = []
+    min_humidity_each_day = []
+    #print('Year[0]   MAX Temp[1]   MIN Temp[3]   MAX Humidity[7]   MIN Humidity[9]')
+    for per_day_weather_data in single_year_weather_data:
+        year.append(int(per_day_weather_data[0].split('-')[0]))#Need to revise it.
+        max_temperature_each_day.append(int(per_day_weather_data[1] or 0))
+        min_temperature_each_day.append(int(per_day_weather_data[3] or 0))
+        max_humidity_each_day.append(int(per_day_weather_data[7] or 0))
+        min_humidity_each_day.append(int(per_day_weather_data[9] or 0))
+
+    return [max(year), max(max_temperature_each_day), min(min_temperature_each_day), max(max_humidity_each_day), min(min_humidity_each_day)]
+
+def single_year_hottest_day(single_year_weather_data):
+    max_temperature_each_day_with_date = []
+    for per_day_weather_data in single_year_weather_data:
+        max_temperature_each_day_with_date.append([per_day_weather_data[0], int(per_day_weather_data[1] or 0)])
+    #print('Year[0]   MAX Temp[1]')
+    max_temperature_day = sorted(max_temperature_each_day_with_date, key=operator.itemgetter(1), reverse=True)
+    return max_temperature_day[0]
+
+def formatted_temprature_result(yearly_temprature_results):
+    print('formatted_temprature_result')
+
+def formatted_hotest_day_result(yearly_hottest_days):
+    print('formatted_temprature_result')
+
+    
+'''
 def generate_report_for_single_year(report_number):
     year = []# Need to revisit it; It will always contain same value; So, why we need to create list and find max value in it?
     max_temperature_each_day = []
@@ -92,10 +124,9 @@ def generate_report_for_single_year(report_number):
     #print(min_humidity_each_day)
     
     print(max(year), max(max_temperature_each_day), min(min_temperature_each_day), max(max_humidity_each_day), min(min_humidity_each_day), sep='   ')
+    #How to convert emtpy string to int 0???
 
 
-
-'''
 def get_list_of_file_content(data_dir):
     files_content = []
     file_names = os.listdir(data_dir)
@@ -141,13 +172,24 @@ def main():
     formatted_file_names_dictionary = get_formatted_file_names(data_dir)
     #pprint.pprint(formatted_file_names_dictionary)
 
+    yearly_temprature_results = []
+    yearly_hottest_days = []
     for year_as_dic_key in formatted_file_names_dictionary.keys():
-        #print(year_as_dic_key)
         single_year_weather_data = combine_weather_data_for_a_year(data_dir, formatted_file_names_dictionary[year_as_dic_key])
-    #print(all_years_weather_data)
-    #################################################################################
+        if report_number == '1':
+            yearly_temprature_results.append(single_year_temprature_result(single_year_weather_data))
+        elif report_number == '2':
+            yearly_hottest_days.append(single_year_hottest_day(single_year_weather_data))
 
-    #How to convert emtpy string to int 0???
+    #print(yearly_temprature_result)
+    #print(yearly_hottest_day)
+
+    '''
+    if report_number == 1:
+        #formatted_temprature_result
+    elif report_number == 2:
+        #formatted_hotest_day_result
+    '''
 
 if __name__ == "__main__":
     main()
