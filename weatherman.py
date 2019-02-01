@@ -98,49 +98,24 @@ def single_year_hottest_day(single_year_weather_data):
     return max_temperature_day[0]
 
 def formatted_temprature_result(yearly_temprature_results):
-    print('formatted_temprature_result')
-
-def formatted_hotest_day_result(yearly_hottest_days):
-    print('formatted_temprature_result')
-
+    print('Year'.ljust(15)+'MAX Temp'.ljust(15)+'MIN Temp'.ljust(15)+'MAX Humidity'.ljust(15)+'MIN Humidity')
+    print('-'.ljust(72, '-'))
+    for yearly_result in yearly_temprature_results:
+        print(str(yearly_result[0]).ljust(15)+str(yearly_result[1]).ljust(15)+str(yearly_result[2]).ljust(15)+str(yearly_result[3]).ljust(15)+str(yearly_result[4]))
+        
     
-'''
-def generate_report_for_single_year(report_number):
-    year = []# Need to revisit it; It will always contain same value; So, why we need to create list and find max value in it?
-    max_temperature_each_day = []
-    min_temperature_each_day = []
-    max_humidity_each_day = []
-    min_humidity_each_day = []
-    print('Year[0]   MAX Temp[1]   MIN Temp[3]   MAX Humidity[7]   MIN Humidity[9]')
-    for list_item in nested_list_of_file_content:
-        year.append(list_item[0].split('-')[0])#Need to revise it.
-        max_temperature_each_day.append(int(list_item[1]))
-        min_temperature_each_day.append(int(list_item[3]))
-        max_humidity_each_day.append(int(list_item[7]))
-        min_humidity_each_day.append(int(list_item[9]))
-        #print(list_item[9])
-        #print(list_item[0].split('-')[0], list_item[1], list_item[3], list_item[7], list_item[9], sep='   ')
+def format_date_str(date):
+        date = date.split('-')
+        date.reverse()
+        return '/'.join(date)
 
-    #print(min_humidity_each_day)
-    
-    print(max(year), max(max_temperature_each_day), min(min_temperature_each_day), max(max_humidity_each_day), min(min_humidity_each_day), sep='   ')
-    #How to convert emtpy string to int 0???
+def formatted_hottest_day_result(yearly_hottest_days):
+    print('Year'.ljust(15)+'Date'.ljust(15)+'Temp')
+    print('-'.ljust(34, '-'))
+    for yearly_result in yearly_hottest_days:
+        print(str(yearly_result[0]).split('-')[0].ljust(15)+str(format_date_str(yearly_result[0])).ljust(15)+str(yearly_result[1]))
 
-
-def get_list_of_file_content(data_dir):
-    files_content = []
-    file_names = os.listdir(data_dir)
-    for file_name in file_names:
-        #print(file_name)
-        file = open(data_dir + os.path.sep + file_name, 'r')
-        files_content.append(file.read())
-        file.close()
-    return files_content
-'''
 # ---- End Functions ---- #
-
-
-
 
 
 def main():
@@ -181,15 +156,10 @@ def main():
         elif report_number == '2':
             yearly_hottest_days.append(single_year_hottest_day(single_year_weather_data))
 
-    #print(yearly_temprature_result)
-    #print(yearly_hottest_day)
-
-    '''
-    if report_number == 1:
-        #formatted_temprature_result
-    elif report_number == 2:
-        #formatted_hotest_day_result
-    '''
+    if report_number == '1':
+        formatted_temprature_result(yearly_temprature_results)
+    elif report_number == '2':
+        formatted_hottest_day_result(yearly_hottest_days)
 
 if __name__ == "__main__":
     main()
